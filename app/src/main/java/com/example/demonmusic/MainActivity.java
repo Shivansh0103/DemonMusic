@@ -4,11 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -40,18 +36,15 @@ public class MainActivity extends AppCompatActivity {
                         {
                             items[i]=mySongs.get(i).getName().replace(".mp3","");
                         }
-                        ArrayAdapter<String> ad= new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, items);
+                        CustomAdapter ad= new CustomAdapter(MainActivity.this, R.layout.mylayout, items);
                         listView.setAdapter(ad);
-                        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                Intent intent=new Intent(MainActivity.this,PlaySong.class);
-                                String currSong=listView.getItemAtPosition(position).toString();
-                                intent.putExtra("SongList",mySongs);
-                                intent.putExtra("CurrentSong",currSong);
-                                intent.putExtra("Position",position);
-                                startActivity(intent);
-                            }
+                        listView.setOnItemClickListener((parent, view, position, id) -> {
+                            Intent intent=new Intent(MainActivity.this,PlaySong.class);
+                            String currSong=listView.getItemAtPosition(position).toString();
+                            intent.putExtra("SongList",mySongs);
+                            intent.putExtra("CurrentSong",currSong);
+                            intent.putExtra("Position",position);
+                            startActivity(intent);
                         });
                     }
 
