@@ -45,7 +45,6 @@ public class PlaySong extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
             }
 
             @Override
@@ -100,11 +99,10 @@ public class PlaySong extends AppCompatActivity {
             Uri uri1 =Uri.parse(songs.get(position).toString());
             mediaPlayer=MediaPlayer.create(getApplicationContext(), uri1);
             mediaPlayer.start();
-            seekBar.setMax(mediaPlayer.getDuration());
             textContent=songs.get(position).getName();
             textContent=textContent.replace(".mp3","");
             t.setText(textContent);
-            seekBar.setProgress(0);
+            seekbarworking(updateSeek,seekBar,mediaPlayer);
         });
         next.setOnClickListener(v -> {
             mediaPlayer.stop();
@@ -117,12 +115,50 @@ public class PlaySong extends AppCompatActivity {
             Uri uri12 =Uri.parse(songs.get(position).toString());
             mediaPlayer=MediaPlayer.create(getApplicationContext(), uri12);
             mediaPlayer.start();
-            seekBar.setMax(mediaPlayer.getDuration());
             textContent=songs.get(position).getName();
             textContent=textContent.replace(".mp3","");
             t.setText(textContent);
-            seekBar.setProgress(0);
+            seekbarworking(updateSeek,seekBar,mediaPlayer);
         });
+    }
+    void seekbarworking(Thread updateSeek,SeekBar seekBar,MediaPlayer mediaPlayer)
+    {
+        seekBar.setMax(mediaPlayer.getDuration());
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                mediaPlayer.seekTo(seekBar.getProgress());
+            }
+        });
+        updateSeek=new Thread()
+        {
+            @Override
+            public void run() {
+                int currentPosition=0;
+                try {
+                    while (currentPosition<mediaPlayer.getDuration())
+                    {
+                        currentPosition=mediaPlayer.getCurrentPosition();
+                        seekBar.setProgress(currentPosition);
+//                            sleep(800);
+                    }
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        };
+        updateSeek.start();
     }
     @Override
     protected void onDestroy() {
